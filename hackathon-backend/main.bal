@@ -50,7 +50,7 @@ service /api on new http:Listener(8080) {
             json errorResponse = {
                 "success": false,
                 "error": "Java code must contain 'public class Main' with main method",
-                "example": "public class Main { public static void main(String[] args) { System.out.println(\"Hello\"); } }"
+                "example": "public class Main { public static void main(String[] args) { System.out.println(\\\"Hello\\\"); } }"
             };
             check caller->respond(errorResponse);
             return;
@@ -178,13 +178,13 @@ service /api on new http:Listener(8080) {
                     "name": "java", 
                     "version": "17",
                     "fileExtension": ".java",
-                    "example": "public class Main { public static void main(String[] args) { System.out.println(\"Hello, World!\"); } }"
+                    "example": "public class Main { public static void main(String[] args) { System.out.println(\\\"Hello, World!\\\"); } }"
                 },
                 {
                     "name": "ballerina",
                     "version": "2201.9.0",
                     "fileExtension": ".bal", 
-                    "example": "import ballerina/io; public function main() { io:println(\"Hello, World!\"); }"
+                    "example": "import ballerina/io; public function main() { io:println(\\\"Hello, World!\\\"); }"
                 }
             ]
         };

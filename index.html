@@ -265,12 +265,11 @@ public function main() {
                 arr[j], arr[j+1] = arr[j+1], arr[j]
     return arr
 
-# Test the algorithm
 numbers = [64, 34, 25, 12, 22, 11, 90]
-print("Original array:", numbers)
+print("Original:", numbers)
 sorted_numbers = bubble_sort(numbers.copy())
-print("Sorted array:", sorted_numbers)
-print("Time Complexity: O(n²)")`;
+print("Sorted:", sorted_numbers)
+print("Time: O(n^2)")`;
             loadExample('python', code);
         }
 
@@ -291,13 +290,15 @@ print("Time Complexity: O(n²)")`;
     
     public static void main(String[] args) {
         int[] numbers = {64, 34, 25, 12, 22, 11, 90};
-        System.out.print("Original array: ");
+        System.out.print("Original: ");
         for (int num : numbers) System.out.print(num + " ");
         
         bubbleSort(numbers);
-        System.out.print("\\nSorted array: ");
+        System.out.println();
+        System.out.print("Sorted: ");
         for (int num : numbers) System.out.print(num + " ");
-        System.out.println("\\nTime Complexity: O(n²)");
+        System.out.println();
+        System.out.println("Time: O(n^2)");
     }
 }`;
             loadExample('java', code);
@@ -322,10 +323,10 @@ function bubbleSort(int[] arr) returns int[] {
 
 public function main() {
     int[] numbers = [64, 34, 25, 12, 22, 11, 90];
-    io:println("Original array: ", numbers);
+    io:println("Original: ", numbers);
     int[] sorted = bubbleSort(numbers.clone());
-    io:println("Sorted array: ", sorted);
-    io:println("Time Complexity: O(n²)");
+    io:println("Sorted: ", sorted);
+    io:println("Time: O(n^2)");
 }`;
             loadExample('ballerina', code);
         }
@@ -381,19 +382,20 @@ print("Time Complexity: O(log n)")`;
     }
     
     public static void main(String[] args) {
-        int[] sortedArray = {11, 12, 22, 25, 34, 64, 90};
+        int[] arr = {11, 12, 22, 25, 34, 64, 90};
         int target = 25;
         
         System.out.print("Array: ");
-        for (int num : sortedArray) System.out.print(num + " ");
-        System.out.println("\\nSearching for: " + target);
+        for (int num : arr) System.out.print(num + " ");
+        System.out.println();
+        System.out.println("Searching for: " + target);
         
-        int result = binarySearch(sortedArray, target);
+        int result = binarySearch(arr, target);
         if (result != -1)
-            System.out.println("Element found at index: " + result);
+            System.out.println("Found at index: " + result);
         else
-            System.out.println("Element not found");
-        System.out.println("Time Complexity: O(log n)");
+            System.out.println("Not found");
+        System.out.println("Time: O(log n)");
     }
 }`;
             loadExample('java', code);
@@ -480,47 +482,20 @@ print("Space Complexity: O(n)")`;
         }
 
         function loadStackJava() {
-            const code = `import java.util.*;
-
-public class Main {
-    static class Stack {
-        private List<Integer> items = new ArrayList<>();
-        
-        public void push(int item) {
-            items.add(item);
-        }
-        
-        public int pop() {
-            if (isEmpty()) throw new RuntimeException("Stack is empty");
-            return items.remove(items.size() - 1);
-        }
-        
-        public int peek() {
-            if (isEmpty()) throw new RuntimeException("Stack is empty");
-            return items.get(items.size() - 1);
-        }
-        
-        public boolean isEmpty() {
-            return items.isEmpty();
-        }
-        
-        public int size() {
-            return items.size();
-        }
-    }
-    
+            const code = `public class Main {
     public static void main(String[] args) {
-        Stack stack = new Stack();
+        int[] stack = new int[5];
+        int top = -1;
         
         // Push elements
-        stack.push(10);
-        stack.push(20);
-        stack.push(30);
+        stack[++top] = 10;
+        stack[++top] = 20;
+        stack[++top] = 30;
         
-        System.out.println("Stack size: " + stack.size());
-        System.out.println("Top element: " + stack.peek());
-        System.out.println("Popped: " + stack.pop());
-        System.out.println("Stack size after pop: " + stack.size());
+        System.out.println("Stack size: " + (top + 1));
+        System.out.println("Top element: " + stack[top]);
+        System.out.println("Popped: " + stack[top--]);
+        System.out.println("New size: " + (top + 1));
         System.out.println("LIFO - Last In, First Out");
     }
 }`;
@@ -579,81 +554,52 @@ public function main() {
 
         // DSA Examples - Dynamic Programming
         function loadFibonacciPython() {
-            const code = `def fibonacci_dp(n, memo={}):
-    """Fibonacci with memoization (Dynamic Programming)"""
-    if n in memo:
-        return memo[n]
-    
+            const code = `def fibonacci(n):
     if n <= 1:
         return n
-    
-    memo[n] = fibonacci_dp(n-1, memo) + fibonacci_dp(n-2, memo)
-    return memo[n]
-
-def fibonacci_iterative(n):
-    """Iterative approach - more space efficient"""
-    if n <= 1:
-        return n
-    
     a, b = 0, 1
     for i in range(2, n + 1):
         a, b = b, a + b
     return b
 
-# Test both approaches
 n = 10
-print(f"Fibonacci({n}) using DP: {fibonacci_dp(n)}")
-print(f"Fibonacci({n}) iterative: {fibonacci_iterative(n)}")
+print(f"Fibonacci({n}): {fibonacci(n)}")
 
-# Show sequence
-print("Fibonacci sequence:")
+print("Sequence:")
 for i in range(n + 1):
-    print(f"F({i}) = {fibonacci_iterative(i)}")
+    print(f"F({i}) = {fibonacci(i)}")
     
-print("Time Complexity: O(n), Space: O(1) iterative")`;
+print("Time: O(n), Space: O(1)")`;
             loadExample('python', code);
         }
 
         function loadFactorialJava() {
             const code = `public class Main {
-    // Recursive approach
-    static long factorialRecursive(int n) {
+    static int factorial(int n) {
         if (n <= 1) return 1;
-        return n * factorialRecursive(n - 1);
+        return n * factorial(n - 1);
     }
     
-    // Iterative approach
-    static long factorialIterative(int n) {
-        long result = 1;
+    static int factorialIterative(int n) {
+        int result = 1;
         for (int i = 2; i <= n; i++) {
             result *= i;
         }
         return result;
     }
     
-    // Dynamic Programming approach with memoization
-    static long[] memo = new long[21]; // For up to 20!
-    static long factorialDP(int n) {
-        if (n <= 1) return 1;
-        if (memo[n] != 0) return memo[n];
-        
-        memo[n] = n * factorialDP(n - 1);
-        return memo[n];
-    }
-    
     public static void main(String[] args) {
-        int n = 8;
+        int n = 5;
         
         System.out.println("Factorial of " + n + ":");
-        System.out.println("Recursive: " + factorialRecursive(n));
+        System.out.println("Recursive: " + factorial(n));
         System.out.println("Iterative: " + factorialIterative(n));
-        System.out.println("DP: " + factorialDP(n));
         
-        System.out.println("\\nFactorial sequence:");
+        System.out.println("Sequence:");
         for (int i = 0; i <= n; i++) {
             System.out.println(i + "! = " + factorialIterative(i));
         }
-        System.out.println("Time Complexity: O(n)");
+        System.out.println("Time: O(n)");
     }
 }`;
             loadExample('java', code);
