@@ -4,6 +4,16 @@ import ballerina/os;
 import ballerina/time;
 import ballerina/regex;
 
+@http:ServiceConfig {
+    cors: {
+        allowOrigins: ["http://127.0.0.1:5500", "http://localhost:3000", "*"],
+        allowCredentials: false,
+        allowHeaders: ["Content-Type", "Authorization"],
+        allowMethods: ["GET", "POST", "OPTIONS"],
+        exposeHeaders: ["Content-Type"]
+    }
+}
+
 service /api on new http:Listener(8080) {
 
     resource function get hello() returns json {
@@ -52,7 +62,7 @@ service /api on new http:Listener(8080) {
         // Build Docker command with performance monitoring
         string dockerImage = "multi-lang-runner:latest";
         
-        // Create proper os:Command record
+        // Create proper os:Command record with environment variable for code
         os:Command dockerCmd = {
             value: "docker",
             arguments: [
@@ -61,9 +71,9 @@ service /api on new http:Listener(8080) {
                 "--cpus=1.0",             // CPU limit  
                 "--network=none",         // No network access
                 "--pids-limit=50",        // Process limit
+                "-e", "CODE_TO_EXECUTE_B64=" + code.toBytes().toBase64(),  // Pass base64 encoded code
                 dockerImage,
-                lang,
-                code
+                lang
             ]
         };
 
@@ -97,7 +107,7 @@ service /api on new http:Listener(8080) {
                         "seconds": executionTimeSeconds
                     },
                     "performance": {
-                        "memoryLimit": "512MB",
+                        "memoryLimit": "256MB",
                         "cpuLimit": "1.0 cores",
                         "processLimit": 50,
                         "networkAccess": false
@@ -148,7 +158,7 @@ service /api on new http:Listener(8080) {
                 "codeExecution": "ready"
             },
             "systemInfo": {
-                "memoryLimit": "512MB per execution",
+                "memoryLimit": "256MB per execution",
                 "timeoutLimit": "30 seconds",
                 "supportedLanguages": ["python", "java", "ballerina"]
             }

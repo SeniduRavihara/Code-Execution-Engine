@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Code Runner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-gray-800 mb-2">🚀 Code Runner</h1>
+            <p class="text-gray-600">Execute Python, Java, and Ballerina code</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <!-- Code Input -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Code Editor</h2>
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Language:</label>
+                    <select id="language" class="w-full p-2 border rounded-md">
+                        <option value="python">Python</option>
+                        <option value="java">Java</option>
+                        <option value="ballerina">Ballerina</option>
+                    </select>
+                </div>
+
+                <div class="mb-4">
+                    <label class="block text-sm font-medium mb-2">Code:</label>
+                    <textarea id="code" rows="12" 
+                        class="w-full p-3 border rounded-md font-mono text-sm resize-none"
+                        placeholder="Enter your code here...">print("Hello, World!")</textarea>
+                </div>
+
+                <div class="flex gap-2">
+                    <button onclick="runCode()" id="runBtn" 
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 disabled:bg-gray-400">
+                        ▶️ Run
+                    </button>
+                    <button onclick="checkHealth()" 
+                        class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700">
+                        🏥 Health
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results -->
+            <div class="bg-white rounded-lg shadow p-6">
+                <h2 class="text-xl font-semibold mb-4">Results</h2>
+                
+                <!-- Status -->
+                <div class="mb-4 p-2 bg-gray-50 rounded text-sm">
+                    Status: <span id="status" class="font-medium">Ready</span>
+                </div>
+
+                <!-- Metrics -->
+                <div id="metrics" class="hidden grid grid-cols-3 gap-2 mb-4 text-sm">
+                    <div class="bg-blue-50 p-2 rounded">
+                        <div class="text-gray-600">Time</div>
+                        <div id="execTime" class="font-semibold">-</div>
+                    </div>
+                    <div class="bg-green-50 p-2 rounded">
+                        <div class="text-gray-600">Lines</div>
+                        <div id="lines" class="font-semibold">-</div>
+                    </div>
+                    <div class="bg-purple-50 p-2 rounded">
+                        <div class="text-gray-600">Complexity</div>
+                        <div id="complexity" class="font-semibold">-</div>
+                    </div>
+                </div>
+
+                <!-- Output -->
+                <div class="bg-gray-900 text-green-400 p-4 rounded-md font-mono text-sm h-64 overflow-y-auto">
+                    <div id="output">Ready to execute code...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Examples -->
+        <div class="mt-8 bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold mb-4">Quick Examples</h3>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div onclick="loadPythonExample()" 
+                     class="p-3 bg-blue-50 rounded cursor-pointer hover:bg-blue-100">
+                    <div class="font-medium text-blue-800">Python Loop</div>
+                    <code class="text-xs text-gray-600">for i in range(3)...</code>
+                </div>
+                
+                <div onclick="loadJavaExample()" 
+                     class="p-3 bg-orange-50 rounded cursor-pointer hover:bg-orange-100">
+                    <div class="font-medium text-orange-800">Java Loop</div>
+                    <code class="text-xs text-gray-600">class Main { ... }</code>
+                </div>
+                
+                <div onclick="loadBallerinaExample()" 
+                     class="p-3 bg-purple-50 rounded cursor-pointer hover:bg-purple-100">
+                    <div class="font-medium text-purple-800">Ballerina Loop</div>
+                    <code class="text-xs text-gray-600">foreach int i...</code>
+                </div>
+            </div>
+        </div>
+
+        <!-- DSA Examples -->
+        <div class="mt-8 bg-white rounded-lg shadow p-6">
+            <h3 class="text-lg font-semibold mb-4">🧠 DSA Examples</h3>
+            
+            <!-- Sorting Algorithms -->
+            <div class="mb-6">
+                <h4 class="font-medium text-gray-800 mb-3">🔄 Sorting Algorithms</h4>
+                <div class="grid md:grid-cols-3 gap-3">
+                    <div onclick="loadBubbleSortPython()" 
+                         class="p-2 bg-blue-50 rounded cursor-pointer hover:bg-blue-100 text-sm">
+                        <div class="font-medium text-blue-800">Python: Bubble Sort</div>
+                        <code class="text-xs text-gray-600">O(n²) comparison sort</code>
+                    </div>
+                    <div onclick="loadBubbleSortJava()" 
+                         class="p-2 bg-orange-50 rounded cursor-pointer hover:bg-orange-100 text-sm">
+                        <div class="font-medium text-orange-800">Java: Bubble Sort</div>
+                        <code class="text-xs text-gray-600">Array sorting with swap</code>
+                    </div>
+                    <div onclick="loadBubbleSortBallerina()" 
+                         class="p-2 bg-purple-50 rounded cursor-pointer hover:bg-purple-100 text-sm">
+                        <div class="font-medium text-purple-800">Ballerina: Bubble Sort</div>
+                        <code class="text-xs text-gray-600">Array manipulation</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Binary Search -->
+            <div class="mb-6">
+                <h4 class="font-medium text-gray-800 mb-3">🔍 Search Algorithms</h4>
+                <div class="grid md:grid-cols-3 gap-3">
+                    <div onclick="loadBinarySearchPython()" 
+                         class="p-2 bg-blue-50 rounded cursor-pointer hover:bg-blue-100 text-sm">
+                        <div class="font-medium text-blue-800">Python: Binary Search</div>
+                        <code class="text-xs text-gray-600">O(log n) divide & conquer</code>
+                    </div>
+                    <div onclick="loadBinarySearchJava()" 
+                         class="p-2 bg-orange-50 rounded cursor-pointer hover:bg-orange-100 text-sm">
+                        <div class="font-medium text-orange-800">Java: Binary Search</div>
+                        <code class="text-xs text-gray-600">Recursive implementation</code>
+                    </div>
+                    <div onclick="loadBinarySearchBallerina()" 
+                         class="p-2 bg-purple-50 rounded cursor-pointer hover:bg-purple-100 text-sm">
+                        <div class="font-medium text-purple-800">Ballerina: Binary Search</div>
+                        <code class="text-xs text-gray-600">Array search function</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Structures -->
+            <div class="mb-6">
+                <h4 class="font-medium text-gray-800 mb-3">📊 Data Structures</h4>
+                <div class="grid md:grid-cols-3 gap-3">
+                    <div onclick="loadLinkedListPython()" 
+                         class="p-2 bg-blue-50 rounded cursor-pointer hover:bg-blue-100 text-sm">
+                        <div class="font-medium text-blue-800">Python: Linked List</div>
+                        <code class="text-xs text-gray-600">Node-based structure</code>
+                    </div>
+                    <div onclick="loadStackJava()" 
+                         class="p-2 bg-orange-50 rounded cursor-pointer hover:bg-orange-100 text-sm">
+                        <div class="font-medium text-orange-800">Java: Stack</div>
+                        <code class="text-xs text-gray-600">LIFO data structure</code>
+                    </div>
+                    <div onclick="loadQueueBallerina()" 
+                         class="p-2 bg-purple-50 rounded cursor-pointer hover:bg-purple-100 text-sm">
+                        <div class="font-medium text-purple-800">Ballerina: Queue</div>
+                        <code class="text-xs text-gray-600">FIFO operations</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Programming -->
+            <div>
+                <h4 class="font-medium text-gray-800 mb-3">⚡ Dynamic Programming</h4>
+                <div class="grid md:grid-cols-3 gap-3">
+                    <div onclick="loadFibonacciPython()" 
+                         class="p-2 bg-blue-50 rounded cursor-pointer hover:bg-blue-100 text-sm">
+                        <div class="font-medium text-blue-800">Python: Fibonacci DP</div>
+                        <code class="text-xs text-gray-600">Memoization technique</code>
+                    </div>
+                    <div onclick="loadFactorialJava()" 
+                         class="p-2 bg-orange-50 rounded cursor-pointer hover:bg-orange-100 text-sm">
+                        <div class="font-medium text-orange-800">Java: Factorial</div>
+                        <code class="text-xs text-gray-600">Recursive & iterative</code>
+                    </div>
+                    <div onclick="loadPalindromeBallerina()" 
+                         class="p-2 bg-purple-50 rounded cursor-pointer hover:bg-purple-100 text-sm">
+                        <div class="font-medium text-purple-800">Ballerina: Palindrome</div>
+                        <code class="text-xs text-gray-600">String manipulation</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        
+        // Handle CORS issues by trying different approaches
+        async function makeRequest(url, options = {}) {
+            try {
+                return await fetch(url, options);
+            } catch (error) {
+                if (error.message.includes('CORS')) {
+                    throw new Error('CORS blocked. Check backend CORS config or try running backend with --cors-allow-all');
+                }
+                throw error;
+            }
+        }
+
+        function setStatus(text, isError = false) {
+            const status = document.getElementById('status');
+            status.textContent = text;
+            status.className = `font-medium ${isError ? 'text-red-600' : 'text-green-600'}`;
+        }
+
+        function loadExample(lang, code) {
+            document.getElementById('language').value = lang;
+            document.getElementById('code').value = code.replace(/\\n/g, '\n');
+            setStatus('Example loaded');
+        }
+
+        function loadPythonExample() {
+            const code = `print("Hello World")
+for i in range(3):
+    print(f"Count: {i}")`;
+            loadExample('python', code);
+        }
+
+        function loadJavaExample() {
+            const code = `public class Main {
+    public static void main(String[] args) {
+        System.out.println("Hello World");
+        for(int i = 0; i < 3; i++) {
+            System.out.println("Count: " + i);
+        }
+    }
+}`;
+            loadExample('java', code);
+        }
+
+        function loadBallerinaExample() {
+            const code = `import ballerina/io;
+
+public function main() {
+    io:println("Hello World");
+    foreach int i in 0..<3 {
+        io:println(string\`Count: \${i}\`);
+    }
+}`;
+            loadExample('ballerina', code);
+        }
+
+        // DSA Examples - Sorting Algorithms
+        function loadBubbleSortPython() {
+            const code = `def bubble_sort(arr):
+    n = len(arr)
+    for i in range(n):
+        for j in range(0, n-i-1):
+            if arr[j] > arr[j+1]:
+                arr[j], arr[j+1] = arr[j+1], arr[j]
+    return arr
+
+# Test the algorithm
+numbers = [64, 34, 25, 12, 22, 11, 90]
+print("Original array:", numbers)
+sorted_numbers = bubble_sort(numbers.copy())
+print("Sorted array:", sorted_numbers)
+print("Time Complexity: O(n²)")`;
+            loadExample('python', code);
+        }
+
+        function loadBubbleSortJava() {
+            const code = `public class Main {
+    static void bubbleSort(int[] arr) {
+        int n = arr.length;
+        for (int i = 0; i < n-1; i++) {
+            for (int j = 0; j < n-i-1; j++) {
+                if (arr[j] > arr[j+1]) {
+                    int temp = arr[j];
+                    arr[j] = arr[j+1];
+                    arr[j+1] = temp;
+                }
+            }
+        }
+    }
+    
+    public static void main(String[] args) {
+        int[] numbers = {64, 34, 25, 12, 22, 11, 90};
+        System.out.print("Original array: ");
+        for (int num : numbers) System.out.print(num + " ");
+        
+        bubbleSort(numbers);
+        System.out.print("\\nSorted array: ");
+        for (int num : numbers) System.out.print(num + " ");
+        System.out.println("\\nTime Complexity: O(n²)");
+    }
+}`;
+            loadExample('java', code);
+        }
+
+        function loadBubbleSortBallerina() {
+            const code = `import ballerina/io;
+
+function bubbleSort(int[] arr) returns int[] {
+    int n = arr.length();
+    foreach int i in 0..<n {
+        foreach int j in 0..<(n-i-1) {
+            if arr[j] > arr[j+1] {
+                int temp = arr[j];
+                arr[j] = arr[j+1];
+                arr[j+1] = temp;
+            }
+        }
+    }
+    return arr;
+}
+
+public function main() {
+    int[] numbers = [64, 34, 25, 12, 22, 11, 90];
+    io:println("Original array: ", numbers);
+    int[] sorted = bubbleSort(numbers.clone());
+    io:println("Sorted array: ", sorted);
+    io:println("Time Complexity: O(n²)");
+}`;
+            loadExample('ballerina', code);
+        }
+
+        // DSA Examples - Search Algorithms
+        function loadBinarySearchPython() {
+            const code = `def binary_search(arr, target):
+    left, right = 0, len(arr) - 1
+    
+    while left <= right:
+        mid = (left + right) // 2
+        if arr[mid] == target:
+            return mid
+        elif arr[mid] < target:
+            left = mid + 1
+        else:
+            right = mid - 1
+    
+    return -1
+
+# Test the algorithm
+sorted_array = [11, 12, 22, 25, 34, 64, 90]
+target = 25
+
+print("Array:", sorted_array)
+print(f"Searching for: {target}")
+result = binary_search(sorted_array, target)
+
+if result != -1:
+    print(f"Element found at index: {result}")
+else:
+    print("Element not found")
+print("Time Complexity: O(log n)")`;
+            loadExample('python', code);
+        }
+
+        function loadBinarySearchJava() {
+            const code = `public class Main {
+    static int binarySearch(int[] arr, int target) {
+        int left = 0, right = arr.length - 1;
+        
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            
+            if (arr[mid] == target)
+                return mid;
+            if (arr[mid] < target)
+                left = mid + 1;
+            else
+                right = mid - 1;
+        }
+        return -1;
+    }
+    
+    public static void main(String[] args) {
+        int[] sortedArray = {11, 12, 22, 25, 34, 64, 90};
+        int target = 25;
+        
+        System.out.print("Array: ");
+        for (int num : sortedArray) System.out.print(num + " ");
+        System.out.println("\\nSearching for: " + target);
+        
+        int result = binarySearch(sortedArray, target);
+        if (result != -1)
+            System.out.println("Element found at index: " + result);
+        else
+            System.out.println("Element not found");
+        System.out.println("Time Complexity: O(log n)");
+    }
+}`;
+            loadExample('java', code);
+        }
+
+        function loadBinarySearchBallerina() {
+            const code = `import ballerina/io;
+
+function binarySearch(int[] arr, int target) returns int {
+    int left = 0;
+    int right = arr.length() - 1;
+    
+    while left <= right {
+        int mid = (left + right) / 2;
+        
+        if arr[mid] == target {
+            return mid;
+        } else if arr[mid] < target {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1;
+}
+
+public function main() {
+    int[] sortedArray = [11, 12, 22, 25, 34, 64, 90];
+    int target = 25;
+    
+    io:println("Array: ", sortedArray);
+    io:println("Searching for: ", target);
+    
+    int result = binarySearch(sortedArray, target);
+    if result != -1 {
+        io:println("Element found at index: ", result);
+    } else {
+        io:println("Element not found");
+    }
+    io:println("Time Complexity: O(log n)");
+}`;
+            loadExample('ballerina', code);
+        }
+
+        // DSA Examples - Data Structures
+        function loadLinkedListPython() {
+            const code = `class Node:
+    def __init__(self, data):
+        self.data = data
+        self.next = None
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+    
+    def append(self, data):
+        new_node = Node(data)
+        if not self.head:
+            self.head = new_node
+            return
+        current = self.head
+        while current.next:
+            current = current.next
+        current.next = new_node
+    
+    def display(self):
+        elements = []
+        current = self.head
+        while current:
+            elements.append(current.data)
+            current = current.next
+        return elements
+
+# Test the linked list
+ll = LinkedList()
+ll.append(1)
+ll.append(2)
+ll.append(3)
+ll.append(4)
+
+print("Linked List:", ll.display())
+print("Space Complexity: O(n)")`;
+            loadExample('python', code);
+        }
+
+        function loadStackJava() {
+            const code = `import java.util.*;
+
+public class Main {
+    static class Stack {
+        private List<Integer> items = new ArrayList<>();
+        
+        public void push(int item) {
+            items.add(item);
+        }
+        
+        public int pop() {
+            if (isEmpty()) throw new RuntimeException("Stack is empty");
+            return items.remove(items.size() - 1);
+        }
+        
+        public int peek() {
+            if (isEmpty()) throw new RuntimeException("Stack is empty");
+            return items.get(items.size() - 1);
+        }
+        
+        public boolean isEmpty() {
+            return items.isEmpty();
+        }
+        
+        public int size() {
+            return items.size();
+        }
+    }
+    
+    public static void main(String[] args) {
+        Stack stack = new Stack();
+        
+        // Push elements
+        stack.push(10);
+        stack.push(20);
+        stack.push(30);
+        
+        System.out.println("Stack size: " + stack.size());
+        System.out.println("Top element: " + stack.peek());
+        System.out.println("Popped: " + stack.pop());
+        System.out.println("Stack size after pop: " + stack.size());
+        System.out.println("LIFO - Last In, First Out");
+    }
+}`;
+            loadExample('java', code);
+        }
+
+        function loadQueueBallerina() {
+            const code = `import ballerina/io;
+
+type Queue record {
+    int[] items;
+};
+
+function createQueue() returns Queue {
+    return {items: []};
+}
+
+function enqueue(Queue queue, int item) {
+    queue.items.push(item);
+}
+
+function dequeue(Queue queue) returns int? {
+    if queue.items.length() == 0 {
+        return ();
+    }
+    return queue.items.shift();
+}
+
+function peek(Queue queue) returns int? {
+    if queue.items.length() == 0 {
+        return ();
+    }
+    return queue.items[0];
+}
+
+function isEmpty(Queue queue) returns boolean {
+    return queue.items.length() == 0;
+}
+
+public function main() {
+    Queue queue = createQueue();
+    
+    // Enqueue elements
+    enqueue(queue, 10);
+    enqueue(queue, 20);
+    enqueue(queue, 30);
+    
+    io:println("Queue items: ", queue.items);
+    io:println("Front element: ", peek(queue));
+    io:println("Dequeued: ", dequeue(queue));
+    io:println("Queue after dequeue: ", queue.items);
+    io:println("FIFO - First In, First Out");
+}`;
+            loadExample('ballerina', code);
+        }
+
+        // DSA Examples - Dynamic Programming
+        function loadFibonacciPython() {
+            const code = `def fibonacci_dp(n, memo={}):
+    """Fibonacci with memoization (Dynamic Programming)"""
+    if n in memo:
+        return memo[n]
+    
+    if n <= 1:
+        return n
+    
+    memo[n] = fibonacci_dp(n-1, memo) + fibonacci_dp(n-2, memo)
+    return memo[n]
+
+def fibonacci_iterative(n):
+    """Iterative approach - more space efficient"""
+    if n <= 1:
+        return n
+    
+    a, b = 0, 1
+    for i in range(2, n + 1):
+        a, b = b, a + b
+    return b
+
+# Test both approaches
+n = 10
+print(f"Fibonacci({n}) using DP: {fibonacci_dp(n)}")
+print(f"Fibonacci({n}) iterative: {fibonacci_iterative(n)}")
+
+# Show sequence
+print("Fibonacci sequence:")
+for i in range(n + 1):
+    print(f"F({i}) = {fibonacci_iterative(i)}")
+    
+print("Time Complexity: O(n), Space: O(1) iterative")`;
+            loadExample('python', code);
+        }
+
+        function loadFactorialJava() {
+            const code = `public class Main {
+    // Recursive approach
+    static long factorialRecursive(int n) {
+        if (n <= 1) return 1;
+        return n * factorialRecursive(n - 1);
+    }
+    
+    // Iterative approach
+    static long factorialIterative(int n) {
+        long result = 1;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+    
+    // Dynamic Programming approach with memoization
+    static long[] memo = new long[21]; // For up to 20!
+    static long factorialDP(int n) {
+        if (n <= 1) return 1;
+        if (memo[n] != 0) return memo[n];
+        
+        memo[n] = n * factorialDP(n - 1);
+        return memo[n];
+    }
+    
+    public static void main(String[] args) {
+        int n = 8;
+        
+        System.out.println("Factorial of " + n + ":");
+        System.out.println("Recursive: " + factorialRecursive(n));
+        System.out.println("Iterative: " + factorialIterative(n));
+        System.out.println("DP: " + factorialDP(n));
+        
+        System.out.println("\\nFactorial sequence:");
+        for (int i = 0; i <= n; i++) {
+            System.out.println(i + "! = " + factorialIterative(i));
+        }
+        System.out.println("Time Complexity: O(n)");
+    }
+}`;
+            loadExample('java', code);
+        }
+
+        function loadPalindromeBallerina() {
+            const code = `import ballerina/io;
+
+function isPalindrome(string str) returns boolean {
+    string cleaned = str.toLowerAscii();
+    int left = 0;
+    int right = cleaned.length() - 1;
+    
+    while left < right {
+        if cleaned[left] != cleaned[right] {
+            return false;
+        }
+        left += 1;
+        right -= 1;
+    }
+    return true;
+}
+
+function isPalindromeRecursive(string str, int left, int right) returns boolean {
+    if left >= right {
+        return true;
+    }
+    
+    if str[left] != str[right] {
+        return false;
+    }
+    
+    return isPalindromeRecursive(str, left + 1, right - 1);
+}
+
+function longestPalindrome(string str) returns string {
+    string longest = "";
+    
+    foreach int i in 0..<str.length() {
+        foreach int j in i..<str.length() {
+            string substring = str.substring(i, j + 1);
+            if isPalindrome(substring) && substring.length() > longest.length() {
+                longest = substring;
+            }
+        }
+    }
+    return longest;
+}
+
+public function main() {
+    string[] testStrings = ["racecar", "hello", "madam", "programming", "level"];
+    
+    foreach string str in testStrings {
+        boolean result = isPalindrome(str);
+        io:println(str + " is palindrome: " + result.toString());
+    }
+    
+    string text = "babad";
+    io:println("\\nLongest palindrome in '" + text + "': " + longestPalindrome(text));
+    io:println("Time Complexity: O(n) for check, O(n³) for longest");
+}`;
+            loadExample('ballerina', code);
+        }
+
+        async function runCode() {
+            const runBtn = document.getElementById('runBtn');
+            const output = document.getElementById('output');
+            const code = document.getElementById('code').value.trim();
+            const language = document.getElementById('language').value;
+
+            if (!code) {
+                output.textContent = 'Please enter code to execute.';
+                return;
+            }
+
+            runBtn.disabled = true;
+            runBtn.textContent = '⏳ Running...';
+            setStatus('Executing...');
+
+            try {
+                const response = await makeRequest(`${API_BASE}/submit`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ code, language })
+                });
+
+                const result = await response.json();
+                
+                // Show metrics
+                if (result.executionTime) {
+                    document.getElementById('metrics').classList.remove('hidden');
+                    document.getElementById('execTime').textContent = `${result.executionTime.milliseconds.toFixed(1)}ms`;
+                }
+                if (result.analysis?.linesOfCode) {
+                    document.getElementById('lines').textContent = result.analysis.linesOfCode;
+                }
+                if (result.analysis?.estimatedComplexity?.timeComplexity) {
+                    document.getElementById('complexity').textContent = 
+                        result.analysis.estimatedComplexity.timeComplexity.split(' - ')[0];
+                }
+
+                // Show output with analysis
+                let outputText = '';
+                if (result.success) {
+                    outputText = result.output || 'Code executed successfully (no output)';
+                    if (result.analysis?.estimatedComplexity?.detectedPatterns?.length > 0) {
+                        outputText += `\n\n📊 Patterns: ${result.analysis.estimatedComplexity.detectedPatterns.join(', ')}`;
+                    }
+                    output.textContent = outputText;
+                    setStatus(`Success (${result.executionTime.milliseconds.toFixed(1)}ms)`);
+                } else {
+                    output.textContent = `❌ ${result.error}\n\n${result.output || ''}`;
+                    setStatus('Error', true);
+                }
+
+            } catch (error) {
+                output.textContent = `❌ Connection failed: ${error.message}\n\nMake sure backend is running on localhost:8080`;
+                setStatus('Connection failed', true);
+            } finally {
+                runBtn.disabled = false;
+                runBtn.textContent = '▶️ Run';
+            }
+        }
+
+        async function checkHealth() {
+            setStatus('Checking health...');
+            try {
+                const response = await makeRequest(`${API_BASE}/health`);
+                const result = await response.json();
+                document.getElementById('output').textContent = `✅ Health: ${result.status}\nDocker: ${result.services.docker}\nLanguages: ${result.systemInfo.supportedLanguages.join(', ')}`;
+                setStatus('Healthy');
+            } catch (error) {
+                document.getElementById('output').textContent = `❌ Health check failed: ${error.message}`;
+                setStatus('Health check failed', true);
+            }
+        }
+
+        // Keyboard shortcut
+        document.getElementById('code').addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'Enter') runCode();
+        });
+    </script>
+</body>
+</html>

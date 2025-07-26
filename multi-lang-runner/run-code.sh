@@ -1,8 +1,9 @@
 #!/bin/bash
 
 LANG="$1"
-shift
-CODE="$*"
+
+# Get code from base64 encoded environment variable to avoid shell escaping issues
+CODE=$(echo "$CODE_TO_EXECUTE_B64" | base64 -d)
 
 TMP_DIR=$(mktemp -d)
 cd "$TMP_DIR"
