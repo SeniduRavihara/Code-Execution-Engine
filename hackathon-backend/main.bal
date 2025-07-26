@@ -1,5 +1,5 @@
 import ballerina/http;
-// import ballerina/io;
+import ballerina/io;
 import ballerina/os;
 import ballerina/time;
 import ballerina/regex;
@@ -57,7 +57,7 @@ service /api on new http:Listener(8080) {
             value: "docker",
             arguments: [
                 "run", "--rm",
-                "--memory=512m",           // Memory limit
+                "--memory=256m",           // Memory limit
                 "--cpus=1.0",             // CPU limit  
                 "--network=none",         // No network access
                 "--pids-limit=50",        // Process limit
@@ -80,17 +80,24 @@ service /api on new http:Listener(8080) {
             decimal executionTimeSeconds = time:utcDiffSeconds(endTime, startTime);
             decimal executionTimeMs = executionTimeSeconds * 1000.0d;
             
+            // Read the output from stdout and stderr
+            byte[] stdoutBytes = check result.output(io:stdout);
+            byte[] stderrBytes = check result.output(io:stderr);
+            
+            string stdout = check string:fromBytes(stdoutBytes);
+            string stderr = check string:fromBytes(stderrBytes);
+            
             if exitCode == 0 {
                 response = {
                     "success": true,
                     "language": lang,
-                    "output": "Code executed successfully", // In real implementation, capture actual output
+                    "output": stdout.trim(),
                     "executionTime": {
                         "milliseconds": executionTimeMs,
                         "seconds": executionTimeSeconds
                     },
                     "performance": {
-                        "memoryLimit": "256MB",
+                        "memoryLimit": "512MB",
                         "cpuLimit": "1.0 cores",
                         "processLimit": 50,
                         "networkAccess": false
@@ -103,7 +110,8 @@ service /api on new http:Listener(8080) {
                 response = {
                     "success": false,
                     "language": lang,
-                    "error": "Code execution failed",
+                    "error": stderr.trim().length() > 0 ? stderr.trim() : "Code execution failed",
+                    "output": stdout.trim(),
                     "executionTime": {
                         "milliseconds": executionTimeMs,
                         "seconds": executionTimeSeconds
@@ -140,7 +148,7 @@ service /api on new http:Listener(8080) {
                 "codeExecution": "ready"
             },
             "systemInfo": {
-                "memoryLimit": "256MB per execution",
+                "memoryLimit": "512MB per execution",
                 "timeoutLimit": "30 seconds",
                 "supportedLanguages": ["python", "java", "ballerina"]
             }
