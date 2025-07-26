@@ -1,0 +1,8 @@
+# Simple Python test
+docker run --rm multi-lang-runner:latest python "print('Hello World')"
+
+# Simple Java test
+docker run --rm multi-lang-runner:latest java 'public class Main { public static void main(String[] args) { System.out.println("Hello World"); } }'
+
+# Simple Ballerina test
+docker run --rm multi-lang-runner:latest ballerina 'import ballerina/io; public function main() { io:println("Hello World"); }'
